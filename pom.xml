@@ -107,25 +107,47 @@
             <version>3.11.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-chrome-driver</artifactId>
+            <version>3.11.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     <build>
+        <sourceDirectory>${basedir}/src/test/java
+        </sourceDirectory>
+<!--        <sourceDirectory>${basedir}/src/test/resources</sourceDirectory>-->
+<!--        <testSourceDirectory>${basedir}/test</testSourceDirectory>-->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.5.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
                 <configuration>
-                    <suiteXmlFiles>
-                        <suiteXmlFile>testng.xml</suiteXmlFile>
+                <includes>
+<!--                    <include>src/test/java/**/*.java</include>-->
+<!--                    <include>src/test/resources/**/*.java</include>-->
+                    <include>src/test/java</include>
+                    <include>src/test/resources</include>
+                                    </includes>
+                                    </configuration>
+                                </plugin>
+                                <plugin>
+                                    <groupId>org.apache.maven.plugins</groupId>
+                                    <artifactId>maven-surefire-plugin</artifactId>
+                                    <version>3.0.0-M5</version>
 
-                    </suiteXmlFiles>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-</project>
+                                        <configuration>
+                                        <suiteXmlFiles>
+                                            <suiteXmlFile>testng.xml</suiteXmlFile>
+
+                                        </suiteXmlFiles>
+                                        </configuration>
+
+
+                                </plugin>
+
+                            </plugins>
+                        </build>
+                    </project>

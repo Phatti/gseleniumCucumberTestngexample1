@@ -11,7 +11,7 @@ import io.cucumber.testng.CucumberOptions;
         ,publish = true
 
 )
-public class cucumberTest extends AbstractTestNGCucumberTests  {
+public class TestRunner extends AbstractTestNGCucumberTests  {
 
 
 }
