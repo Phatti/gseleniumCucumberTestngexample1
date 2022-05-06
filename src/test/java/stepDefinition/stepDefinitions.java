@@ -91,5 +91,74 @@ public class stepDefinitions {
     public void quite() {
         driver.quit();
     }
+    
+    /**
+	 * @author Preeti
+	 * @purpose : To read email from Gmail account (Inbox) which is given in
+	 *          AppConfig.properties file
+	 * @param emailSubjectToSearch : Pass the subject of that email whose body needs
+	 *                             to be fetch
+	 * @pre-requisite : Create 'App passwords' from your Google Account Settings >
+	 *                Security tab > App Password > Select App & Device (i.e. Mail &
+	 *                Windows Computer) > Generate button > Set your generated
+	 *                16-digit code into gmail_password into AppConfig.properties
+	 *                file
+	 *                (Ref Link : https://support.google.com/accounts/answer/185833?visit_id=637870783869778468-1550974517&rd=1#ts=3202254,3202256)
+	 * @return : whole email body of emailSubjectToSearch
+	 * @date 02/05/2022
+	 */
+	public static String readGmailInboxAndReturnEmailBody(String emailSubjectToSearch) {
+		String inboxMessage = "";
+
+		String email_id = SetObjectProperties.appConfig.getPropertyValue("gmail_username");
+		String password = ""; 
+		password = System.getenv("vioohGmailAccountPassword");				
+		if(null==password||password.isEmpty()) {
+			password = SetObjectProperties.appConfig.getPropertyValue("gmail_password");
+		}		
+
+		// Set properties
+		Properties properties = new Properties();
+		properties.put("mail.store.protocol", SetObjectProperties.appConfig.getPropertyValue("mail_store_protocol"));
+		properties.put("mail.imaps.host", SetObjectProperties.appConfig.getPropertyValue("mail_imaps_host"));
+		properties.put("mail.imaps.port", SetObjectProperties.appConfig.getPropertyValue("mail_imaps_port"));
+		properties.put("mail.imap.ssl.enable", "true");
+		properties.put("mail.mime.base64.ignoreerrors", "true");
+
+		try {
+			// create a session
+			Session session = null;
+			session = Session.getDefaultInstance(properties, null);
+			// SET the store for IMAPS
+			Store store = session.getStore("imaps");
+			System.out.println("Connection initiated... "+email_id);
+			// Trying to connect IMAP server
+			store.connect(email_id, password);
+			System.out.println("Connection is ready");
+
+			// Get inbox folder
+			Folder inbox = store.getFolder("inbox");
+			// SET readonly format (*You can set read and write)
+			inbox.open(Folder.READ_ONLY);
+			// Inbox email count
+			int messageCount = inbox.getMessageCount();
+			System.out.println("Total Messages in your Email INBOX : " + messageCount);
+
+			for (int i = messageCount; i > 0; i--) {
+				System.out.println("Email Subjects : " + inbox.getMessage(i).getSubject());
+				if (inbox.getMessage(i).getSubject().contains(emailSubjectToSearch)) {
+					inboxMessage = inbox.getMessage(i).getContent().toString();
+					break;
+				}
+			}
+			inbox.close(true);
+			store.close();
+			System.out.println("\nWhole Email body message: " + inboxMessage);
+			return inboxMessage;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }
 
